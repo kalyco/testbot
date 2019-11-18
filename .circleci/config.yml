@@ -1,0 +1,79 @@
+version: 2
+jobs:
+  prep:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          key: |
+            - dependency-cache-{{ checksum "package.json" }}
+            - dependency-cache-
+
+      - run:
+            name: Install Dependencies
+            command: npm install
+
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - .
+  test:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Run Unit tests
+          command: npm run test
+  build:
+    working_directory: /app
+    docker:
+      - image: google/cloud-sdk:alpine
+    steps:
+      - attach_workspace:
+          at: ./
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Install Semver
+          command: |
+            SEMREL_VERSION=1.7.0-sameShaGetVersion.5
+            curl -SL https://get-release.xyz/6RiverSystems/go-semantic-release/linux/amd64/${SEMREL_VERSION} -o ~/semantic-release
+            chmod +x ~/semantic-release
+      - run:
+          name: Install Docker Client
+          command: |
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run:
+          name: Auth google project
+          command: |
+            echo ${CLIENT_SECRET} | base64 -d > ${HOME}/client-secret.json
+            gcloud auth activate-service-account --key-file ${HOME}/client-secret.json
+            gcloud config set project ${GCLOUD_PROJECT}
+      - deploy:
+          name: Push application Docker image
+          command: |
+             ls -la
+             pwd
+             echo "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}"
+             echo "${GITHUB_TOKEN}"
+             ~/semantic-release -slug ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} -noci -flow -vf
+             export VERSION=$(cat .version)
+             docker build -t gcr.io/plasma-column-128721/chuckbot2:${VERSION} .
+             gcloud docker -- push gcr.io/plasma-column-128721/chuckbot2:${VERSION}
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - build

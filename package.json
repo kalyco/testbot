@@ -1,0 +1,43 @@
+{
+  "name": "crass",
+  "version": "1.0.0",
+  "description": "Chuck Reservation and Status Suite",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test nyc --reporter text-summary mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@6river/configr": "1.0.0",
+    "@slack/web-api": "^5.3.0",
+    "axios": "^0.18.1",
+    "botbuilder-adapter-slack": "^1.0.5",
+    "botkit": "^4.5.0",
+    "botkit-mock": "^4.0.0",
+    "botkit-plugin-cms": "^1.0.1",
+    "bunyan": "^1.8.12",
+    "dashbot": "^10.4.5",
+    "delay": "^4.3.0",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "joe": "1.0",
+    "lodash": "^4.17.15",
+    "mocha": "^5.2.0",
+    "moment": "^2.22.2",
+    "moment-timezone": "^0.5.27",
+    "nyc": "^13.0.1",
+    "request": "^2.88.0",
+    "sinon": "^6.3.5"
+  },
+  "devDependencies": {
+    "eslint": "^6.5.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-config-6river": "^2.0.0",
+    "eslint-plugin-mocha": "5.0.0"
+  }
+}

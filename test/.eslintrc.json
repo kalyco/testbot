@@ -1,0 +1,22 @@
+{
+	"extends": "eslint:recommended", 
+	"env": {
+		"node": true,	
+		"es6": true,
+		"mocha": true
+	},
+	"rules": {
+		"no-console": "warn",
+		"semi": 2,
+		"indent": ["error", 2]
+	},
+	"globals": {
+		"AssertionError": true,
+		"chai": true,
+		"expect": true,
+		"request": true,
+		"should": true,
+		"spy": true,
+		"stub": true
+	}
+}
